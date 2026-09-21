@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>测测你是哪种入乡青年</title>
+<style>
+  :root{
+    --cream:#FBF6E9;
+    --green-900:#24402C;
+    --green-700:#2F5B3C;
+    --green-500:#5C9464;
+    --green-300:#A9CDA6;
+    --orange:#E1793B;
+    --orange-soft:#F4A25C;
+    --ink:#2C3A2E;
+  }
+
+  *{box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+    color:var(--ink);
+    background:var(--cream);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  /* 纸张点点纹理 */
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background-image:radial-gradient(rgba(47,91,60,.07) 1px, transparent 1px);
+    background-size:22px 22px;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  /* 右上角暖色光晕 */
+  body::after{
+    content:"";
+    position:fixed;
+    top:-220px;
+    right:-180px;
+    width:620px;
+    height:620px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(244,162,92,.20), rgba(244,162,92,0) 70%);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  /* ===== 底部山丘 ===== */
+  .hills{
+    position:fixed;
+    left:0;right:0;bottom:0;
+    width:100%;
+    height:420px;
+    z-index:0;
+    pointer-events:none;
+    display:block;
+  }
+
+  /* ===== 顶部进度条 ===== */
+  .progress{
+    position:fixed;
+    top:0;left:0;right:0;
+    height:4px;
+    background:rgba(47,91,60,.08);
+    z-index:60;
+  }
+  .progress i{
+    display:block;
+    height:100%;
+    width:0;
+    border-radius:0 4px 4px 0;
+    background:linear-gradient(90deg,var(--green-500),var(--orange));
+    transition:width .45s cubic-bezier(.2,.8,.2,1);
+  }
+
+  main{
+    position:relative;
+    z-index:1;
+    max-width:780px;
+    margin:0 auto;
+    padding:0 22px;
+  }
+
+  /* ===== 头部 ===== */
+  .hero{
+    position:relative;
+    text-align:center;
+    padding:76px 8px 34px;
+  }
+
+  .kicker{
+    display:inline-block;
+    padding:7px 18px;
+    font-size:12.5px;
+    letter-spacing:.18em;
+    color:var(--orange);
+    background:#fff;
+    border:1.5px dashed rgba(225,121,59,.55);
+    border-radius:999px;
+  }
+
+  h1{
+    position:relative;
+    margin:24px 0 16px;
+    font-size:clamp(30px,6.6vw,50px);
+    line-height:1.28;
+    font-weight:800;
+    letter-spacing:.02em;
+    color:var(--green-900);
+  }
+
+  h1 .hl{
+    color:var(--orange);
+    position:relative;
+    display:inline-block;
+  }
+
+  h1 .hl::after{
+    content:"";
+    position:absolute;
+    left:2%;right:2%;
+    bottom:-6px;
+    height:8px;
+    border-radius:50%;
+    background:radial-gradient(ellipse at center, rgba(244,162,92,.55), rgba(244,162,92,0) 72%);
+  }
+
+  .qm{
+    position:absolute;
+    font-size:.62em;
+    color:var(--orange-soft);
+    font-weight:800;
+    animation:sway 3.6s ease-in-out infinite;
+  }
+  .qm-l{left:4%;top:6%;transform:rotate(-14deg);}
+  .qm-r{right:4%;bottom:8%;transform:rotate(14deg);animation-delay:-1.8s;}
+
+  @keyframes sway{
+    0%,100%{transform:translateY(0) rotate(-14deg);}
+    50%{transform:translateY(-6px) rotate(-8deg);}
+  }
+
+  .sub{
+    margin:0;
+    font-size:15px;
+    color:rgba(47,91,60,.72);
+    letter-spacing:.04em;
+  }
+
+  /* 云朵 */
+  .cloud{
+    position:absolute;
+    filter:drop-shadow(0 8px 12px rgba(47,91,60,.09));
+    pointer-events:none;
+    animation:drift 7s ease-in-out infinite;
+  }
+  .cloud-a{width:104px;top:52px;right:2%;}
+  .cloud-b{width:72px;top:120px;left:1%;animation-delay:-3.2s;}
+  @keyframes drift{
+    0%,100%{transform:translateX(0);}
+    50%{transform:translateX(14px);}
+  }
+
+  /* ===== 问卷卡片 ===== */
+  .card{
+    position:relative;
+    background:#fff;
+    border:1.5px solid rgba(47,91,60,.10);
+    border-radius:22px;
+    padding:26px 24px 18px;
+    margin-bottom:20px;
+    box-shadow:0 14px 34px -22px rgba(36,64,44,.45);
+    animation:rise .5s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .card:nth-child(1){animation-delay:.05s;}
+  .card:nth-child(2){animation-delay:.12s;}
+  .card:nth-child(3){animation-delay:.19s;}
+  .card:nth-child(4){animation-delay:.26s;}
+  .card:nth-child(5){animation-delay:.33s;}
+
+  @keyframes rise{
+    from{opacity:0;transform:translateY(18px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+
+  .q-head{
+    display:flex;
+    gap:13px;
+    align-items:flex-start;
+    margin-bottom:18px;
+  }
+
+  .q-num{
+    flex:none;
+    width:34px;height:34px;
+    border-radius:12px;
+    display:grid;
+    place-items:center;
+    font-size:15px;
+    font-weight:800;
+    color:#fff;
+    background:linear-gradient(160deg,var(--green-500),var(--green-700));
+    box-shadow:0 8px 14px -8px rgba(47,91,60,.9);
+  }
+
+  .q-title{
+    margin:2px 0 0;
+    font-size:17px;
+    line-height:1.55;
+    font-weight:700;
+    color:var(--green-900);
+  }
+
+  /* ===== 选项 ===== */
+  .opt{
+    position:relative;
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    padding:13px 15px;
+    margin-bottom:10px;
+    border:1.5px solid rgba(47,91,60,.10);
+    border-radius:15px;
+    background:#FDFBF4;
+    cursor:pointer;
+    transition:border-color .18s, background .18s, box-shadow .18s, transform .18s;
+  }
+
+  .opt:last-child{margin-bottom:6px;}
+
+  .opt:hover{
+    background:#fff;
+    border-color:rgba(225,121,59,.5);
+    transform:translateY(-1px);
+  }
+
+  .opt input{
+    position:absolute;
+    opacity:0;
+    width:0;height:0;
+    pointer-events:none;
+  }
+
+  .dot{
+    flex:none;
+    width:24px;height:24px;
+    margin-top:1px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    font-size:12px;
+    font-weight:800;
+    color:var(--green-700);
+    background:#fff;
+    border:1.5px solid rgba(47,91,60,.25);
+    transition:all .18s ease;
+  }
+
+  .txt{
+    font-size:14.8px;
+    line-height:1.75;
+    color:#43523F;
+  }
+
+  /* 选中态 */
+  .opt:has(input:checked){
+    background:#FFF7EE;
+    border-color:var(--orange);
+    box-shadow:0 0 0 3px rgba(225,121,59,.13);
+  }
+  .opt input:checked ~ .dot{
+    background:var(--orange);
+    border-color:var(--orange);
+    color:#fff;
+    transform:scale(1.06);
+  }
+  .opt input:checked ~ .txt{
+    color:var(--green-900);
+    font-weight:600;
+  }
+
+  /* ===== 计数 ===== */
+  .counter{
+    width:fit-content;
+    margin:26px auto 0;
+    padding:10px 24px;
+    font-size:14px;
+    color:var(--green-700);
+    background:#fff;
+    border:1.5px dashed rgba(225,121,59,.5);
+    border-radius:999px;
+    letter-spacing:.03em;
+  }
+  .counter b{
+    color:var(--orange);
+    font-size:16px;
+    margin:0 1px;
+  }
+
+  /* ===== 页脚 ===== */
+  footer{
+    text-align:center;
+    padding:44px 10px 130px;
+  }
+  .foot-main{
+    margin:0 0 12px;
+    font-size:15px;
+    color:var(--green-900);
+    letter-spacing:.03em;
+  }
+  .foot-sub{
+    margin:0;
+    font-size:12.5px;
+    letter-spacing:.08em;
+    color:rgba(47,91,60,.5);
+  }
+
+  /* ===== 响应式 ===== */
+  @media (max-width:560px){
+    .hero{padding:58px 4px 26px;}
+    .card{padding:20px 16px 12px;border-radius:18px;}
+    .q-title{font-size:16px;}
+    .txt{font-size:14.2px;}
+    .qm{display:none;}
+    .cloud-a{width:76px;top:36px;}
+    .cloud-b{width:54px;top:92px;}
+    .hills{height:300px;}
+    footer{padding-bottom:110px;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none !important;transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<!-- 顶部进度 -->
+<div class="progress"><i id="bar"></i></div>
+
+<!-- 底部山丘 -->
+<svg class="hills" viewBox="0 0 1440 420" preserveAspectRatio="none" aria-hidden="true">
+  <path fill="#A9CDA6" opacity=".45"
+        d="M0,240 C160,180 300,270 480,215 C660,160 820,255 1000,205 C1160,160 1320,245 1440,200 L1440,420 L0,420 Z"/>
+  <path fill="#5C9464" opacity=".5"
+        d="M0,310 C170,250 330,335 520,290 C710,245 860,330 1050,285 C1220,245 1350,315 1440,280 L1440,420 L0,420 Z"/>
+  <path fill="#2F5B3C" opacity=".75"
+        d="M0,370 C200,325 380,390 580,355 C780,320 950,385 1150,352 C1290,330 1380,368 1440,350 L1440,420 L0,420 Z"/>
+</svg>
+
+<main>
+
+  <!-- 头部 -->
+  <header class="hero">
+    <svg class="cloud cloud-a" viewBox="0 0 140 70" aria-hidden="true">
+      <g fill="#ffffff">
+        <ellipse cx="45" cy="45" rx="30" ry="22"/>
+        <ellipse cx="78" cy="34" rx="34" ry="26"/>
+        <ellipse cx="106" cy="48" rx="24" ry="18"/>
+      </g>
+    </svg>
+    <svg class="cloud cloud-b" viewBox="0 0 140 70" aria-hidden="true">
+      <g fill="#ffffff">
+        <ellipse cx="45" cy="45" rx="28" ry="20"/>
+        <ellipse cx="80" cy="38" rx="30" ry="23"/>
+        <ellipse cx="104" cy="50" rx="20" ry="15"/>
+      </g>
+    </svg>
+
+    <span class="kicker">乡村青年图鉴</span>
+
+    <h1>
+      <span class="qm qm-l">?</span>
+      测测你是哪种<br><span class="hl">入乡青年</span>
+      <span class="qm qm-r">?</span>
+    </h1>
+
+    <p class="sub">5 道小题，看看你和乡村的缘分是哪一款 🌾</p>
+  </header>
+
+  <!-- 问卷 -->
+  <form class="quiz" onsubmit="return false;">
+
+    <!-- Q1 -->
+    <section class="card">
+      <div class="q-head">
+        <div class="q-num">1</div>
+        <h2 class="q-title">第一次来到一个陌生村子，你最容易被什么吸引？</h2>
+      </div>
+      <div class="opts">
+        <label class="opt">
+          <input type="radio" name="q1">
+          <span class="dot">A</span>
+          <span class="txt">一家不起眼的老店、一门快要失传的手艺，或者一个很会讲故事的老人。</span>
+        </label>
+        <label class="opt">
+          <input type="radio" name="q1">
+          <span class="dot">B</span>
+          <span class="txt">“这里居然还有这个？”——任何没见过的新鲜玩意都能让我停下来。</span>
+        </label>
+        <label class="opt">
+          <input type="radio" name="q1">
+          <span class="dot">C</span>
+          <span class="txt">山、水、田野、风，还有一种“终于不用赶时间了”的感觉。</span>
+        </label>
+        <label class="opt">
+          <input type="radio" name="q1">
+          <span class="dot">D</span>
+          <span class="txt">一个有意思的青年空间、兴趣社群，或者特别适合拍照 / 创作的地方。</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- Q2 -->
+    <section class="card">
+      <div class="q-head">
+        <div class="q-num">2</div>
+        <h2 class="q-title">如果让你给“乡村生活”配一首 BGM，你觉得更接近哪种？</h2>
+      </div>
+      <div class="opts">
+        <label class="opt">
+          <input type="radio" name="q2">
+          <span class="dot">A</span>
+          <span class="txt">有点老派，但越听越有味道的民谣。</span>
+        </label>
+        <label class="opt">
+          <input type="radio" name="q2">
+          <span class="dot">B</span>
+          <span class="txt">节奏感很强、一听上去就比较新潮的歌。</span>
+        </label>
+        <label class="opt">
+          <input type="radio" name="q2">
+          <span class="dot">C</span>
+          <span class="txt">风声、雨声、树叶沙沙声都可以，只要没有老板的声音。</span>
+        </label>
+        <label class="opt">
+          <input type="radio" name="q2">
+          <span class="dot">D</span>
+          <span class="txt">二次元 / 电子 / City Pop / 任何你喜欢的“精神食粮”。</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- Q3 -->
+    <section class="card">
+      <div class="q-head">
+        <div class="q-num">3</div>
+        <h2 class="q-title">如果乡村生活遇到“小插曲”（比如断网了 / 快递不包邮 / 没外卖），你会怎么想？</h2>
+      </div>
+      <div class="opts">
+        <label class="opt">
+          <input type="radio" name="q3">
+          <span class="dot">A</span>
+          <span class="txt">没关系，正好回归自然，看星星干农活，这也是一种现代化的转型体验。</span>
+        </label>
+        <label class="opt">
+          <input type="radio" name="q3">
+          <span class="dot">B</span>
+          <span class="txt">痛点就是机会！快递不包邮？我研究一下能不能在村里搞个社区团购物流点。</span>
+        </label>
+        <label class="opt">
+          <input type="radio" name="q3">
+          <span class="dot">C</span>
+          <span class="txt">无所谓，反正我只是个过客。正好去村里小卖部淘点童年零食，也是一种风景。</span>
+        </label>
+        <label class="opt">
+          <input type="radio" name="q3">
+          <span class="dot">D</span>
+          <span class="txt">破防了！我要发个朋友圈吐槽，然后在线上社群里和网友们狠狠共鸣一下。</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- Q4 -->
+    <section class="card">
+      <div class="q-head">
+        <div class="q-num">4</div>
+        <h2 class="q-title">假设村里给了你一笔“小启动资金”，只能拿来做一件事，你会——</h2>
+      </div>
+      <div class="opts">
+        <label class="opt">
+          <input type="radio" name="q4">
+          <span class="dot">A</span>
+          <span class="txt">把家乡的一项老手艺、老味道或者老文化重新做起来，让它有机会被更多人看见。</span>
+        </label>
+        <label class="opt">
+          <input type="radio" name="q4">
+          <span class="dot">B</span>
+          <span class="txt">找一个自己感兴趣的方向，在村里试着开一家店、做一个项目，先干起来再说。</span>
+        </label>
+        <label class="opt">
+          <input type="radio" name="q4">
+          <span class="dot">C</span>
+          <span class="txt">举办一场接地气的乡村集市，有美食、有音乐，主打一个松弛、解压。</span>
+        </label>
+        <label class="opt">
+          <input type="radio" name="q4">
+          <span class="dot">D</span>
+          <span class="txt">做一个线上平台或社群，把喜欢乡村生活、文化和兴趣的人聚到一起。</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- Q5 -->
+    <section class="card">
+      <div class="q-head">
+        <div class="q-num">5</div>
+        <h2 class="q-title">如果你真的要在乡村待上一段时间，下面哪件事最容易让你产生“我愿意留下来”的念头？</h2>
+      </div>
+      <div class="opts">
+        <label class="opt">
+          <input type="radio" name="q5">
+          <span class="dot">A</span>
+          <span class="txt">发现自己熟悉的地方正在发生变化，而且自己恰好能为它做些什么。</span>
+        </label>
+        <label class="opt">
+          <input type="radio" name="q5">
+          <span class="dot">B</span>
+          <span class="txt">遇到一群志同道合的人，发现这里真的能容得下自己的想法和事业。</span>
+        </label>
+        <label class="opt">
+          <input type="radio" name="q5">
+          <span class="dot">C</span>
+          <span class="txt">发现这里的生活节奏太舒服了，早上醒来不用赶地铁，晚上还能看看星星。</span>
+        </label>
+        <label class="opt">
+          <input type="radio" name="q5">
+          <span class="dot">D</span>
+          <span class="txt">发现无论身处哪里，都能通过网络继续工作、创作、交朋友，还能参与这里正在发生的事情。</span>
+        </label>
+      </div>
+    </section>
+
+  </form>
+
+  <div class="counter">已完成 <b id="count">0</b> / 5</div>
+
+  <footer>
+    <p class="foot-main">答案没有对错，每一种都是乡村需要的青年 🌾</p>
+    <p class="foot-sub">BTU宜兴柯菲青年社区 × 宜兴团市委</p>
+  </footer>
+
+</main>
+
+<script>
+  (function () {
+    var inputs = Array.prototype.slice.call(document.querySelectorAll('.opt input'));
+    var bar = document.getElementById('bar');
+    var countEl = document.getElementById('count');
+    var total = 5;
+
+    function update() {
+      var answered = {};
+      inputs.forEach(function (i) {
+        if (i.checked) answered[i.name] = true;
+      });
+      var n = Object.keys(answered).length;
+
+      bar.style.width = (n / total * 100) + '%';
+      countEl.textContent = n;
+    }
+
+    inputs.forEach(function (i) {
+      i.addEventListener('change', update);
+    });
+
+    update();
+  })();
+</script>
+
+</body>
+</html>
