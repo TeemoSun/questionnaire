@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>乡村生活小问卷</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --cream: #FDF6E9;
+    --card: #FFFFFF;
+    --green: #6BA368;
+    --green-dark: #4E8A57;
+    --brown: #4A3F35;
+    --brown-light: #8C7B6B;
+    --line: #EFE3CD;
+    --accent: #F2A65A;
+    --sky: #CDE9F2;
+  }
+
+  body {
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--cream);
+    color: var(--brown);
+    line-height: 1.7;
+    /* 细微的波点纹理 */
+    background-image: radial-gradient(#F3E8D3 1.5px, transparent 1.5px);
+    background-size: 26px 26px;
+    padding: 24px 16px 60px;
+  }
+
+  .wrap { max-width: 700px; margin: 0 auto; }
+
+  /* ---------- 顶部横幅 ---------- */
+  .banner {
+    background: linear-gradient(180deg, var(--sky) 0%, #E8F5E4 100%);
+    border: 3px solid var(--brown);
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 6px 6px 0 rgba(74, 63, 53, .15);
+    margin-bottom: 34px;
+  }
+  .banner svg { display: block; width: 100%; height: auto; }
+
+  .title-box {
+    text-align: center;
+    padding: 10px 20px 26px;
+    background: #fffdf6;
+    border-top: 3px dashed var(--line);
+  }
+  .title-box h1 { font-size: 26px; letter-spacing: 2px; margin-top: 8px; }
+  .title-box h1 span { color: var(--green-dark); }
+  .title-box p { color: var(--brown-light); font-size: 14px; margin-top: 6px; }
+
+  /* ---------- 题目卡片 ---------- */
+  .q-card {
+    background: var(--card);
+    border: 3px solid var(--brown);
+    border-radius: 18px;
+    padding: 22px 22px 18px;
+    margin-bottom: 26px;
+    box-shadow: 5px 5px 0 rgba(74, 63, 53, .12);
+    position: relative;
+  }
+
+  .q-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+
+  .q-num {
+    flex-shrink: 0;
+    width: 40px; height: 40px;
+    background: var(--green);
+    border: 2.5px solid var(--brown);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: bold; font-size: 18px;
+    box-shadow: 2px 2px 0 rgba(74, 63, 53, .25);
+  }
+  /* 每题不同颜色的小徽章 */
+  .q-card:nth-of-type(2) .q-num { background: var(--accent); }
+  .q-card:nth-of-type(3) .q-num { background: #E8785A; }
+  .q-card:nth-of-type(4) .q-num { background: #7EA8D8; }
+  .q-card:nth-of-type(5) .q-num { background: #C98BC9; }
+
+  .q-title { font-size: 17px; font-weight: bold; padding-top: 5px; }
+
+  .q-icon {
+    position: absolute; top: -18px; right: 16px;
+    width: 40px; height: 40px;
+    background: #fffdf6;
+    border: 2.5px solid var(--brown);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    transform: rotate(6deg);
+    box-shadow: 2px 2px 0 rgba(74, 63, 53, .15);
+  }
+  .q-icon svg { width: 24px; height: 24px; }
+
+  /* ---------- 选项 ---------- */
+  .opt { display: block; margin-bottom: 10px; cursor: pointer; }
+  .opt input { display: none; }
+
+  .opt-box {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px;
+    background: #FFFCF3;
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    transition: all .15s ease;
+  }
+  .opt:hover .opt-box {
+    border-color: var(--green);
+    background: #F2F9EE;
+    transform: translateX(4px);
+  }
+
+  .radio {
+    flex-shrink: 0;
+    width: 20px; height: 20px;
+    border: 2.5px solid var(--brown-light);
+    border-radius: 50%;
+    position: relative;
+    transition: all .15s ease;
+  }
+  .radio::after {
+    content: "";
+    position: absolute; inset: 3px;
+    border-radius: 50%;
+    background: var(--green);
+    transform: scale(0);
+    transition: transform .15s ease;
+  }
+  .opt input:checked ~ .opt-box {
+    border-color: var(--green-dark);
+    background: #EAF5E6;
+    box-shadow: 2px 2px 0 rgba(107, 163, 104, .3);
+  }
+  .opt input:checked ~ .opt-box .radio {
+    border-color: var(--green-dark);
+  }
+  .opt input:checked ~ .opt-box .radio::after { transform: scale(1); }
+  .opt input:checked ~ .opt-box .opt-text { color: var(--green-dark); font-weight: 600; }
+
+  .opt-text { font-size: 14.5px; }
+
+  /* ---------- 底部 ---------- */
+  .footer {
+    text-align: center;
+    color: var(--brown-light);
+    font-size: 13px;
+    margin-top: 40px;
+  }
+  .footer .divider {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    margin-bottom: 10px; color: var(--green);
+  }
+  .footer .divider::before, .footer .divider::after {
+    content: ""; width: 60px; height: 2px;
+    background: repeating-linear-gradient(90deg, var(--line) 0 6px, transparent 6px 12px);
+  }
+
+  @media (max-width: 520px) {
+    .title-box h1 { font-size: 21px; }
+    .q-card { padding: 18px 14px 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ======= 顶部卡通乡村场景 ======= -->
+  <div class="banner">
+    <svg viewBox="0 0 700 240" xmlns="http://www.w3.org/2000/svg">
+      <!-- 太阳 -->
+      <g transform="translate(590, 52)">
+        <circle r="26" fill="#F7C860" stroke="#4A3F35" stroke-width="2.5"/>
+        <g stroke="#4A3F35" stroke-width="2.5" stroke-linecap="round">
+          <line x1="0" y1="-38" x2="0" y2="-30"/>
+          <line x1="0" y1="38" x2="0" y2="30"/>
+          <line x1="-38" y1="0" x2="-30" y2="0"/>
+          <line x1="38" y1="0" x2="30" y2="0"/>
+          <line x1="-27" y1="-27" x2="-21" y2="-21"/>
+          <line x1="27" y1="27" x2="21" y2="21"/>
+          <line x1="-27" y1="27" x2="-21" y2="21"/>
+          <line x1="27" y1="-27" x2="21" y2="-21"/>
+        </g>
+        <!-- 太阳的笑脸 -->
+        <circle cx="-8" cy="-4" r="2.5" fill="#4A3F35"/>
+        <circle cx="8" cy="-4" r="2.5" fill="#4A3F35"/>
+        <path d="M -8 6 Q 0 13 8 6" fill="none" stroke="#4A3F35" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+
+      <!-- 云朵 -->
+      <g fill="#FFFFFF" stroke="#4A3F35" stroke-width="2.5">
+        <path d="M 90 60 a 16 16 0 0 1 30 -8 a 14 14 0 0 1 24 8 z"/>
+        <path d="M 340 40 a 14 14 0 0 1 26 -7 a 12 12 0 0 1 21 7 z"/>
+      </g>
+
+      <!-- 远山 -->
+      <path d="M -10 190 Q 120 90 260 175 Q 300 150 360 165 Q 480 100 580 170 Q 650 140 710 175 L 710 250 L -10 250 Z"
+            fill="#A9CBA0" stroke="#4A3F35" stroke-width="2.5"/>
+
+      <!-- 近处草地 -->
+      <path d="M -10 210 Q 180 180 350 200 Q 520 220 710 195 L 710 250 L -10 250 Z"
+            fill="#8FBE85" stroke="#4A3F35" stroke-width="2.5"/>
+
+      <!-- 小房子 -->
+      <g transform="translate(180, 128)">
+        <rect x="0" y="24" width="70" height="48" fill="#FFF6E3" stroke="#4A3F35" stroke-width="2.5"/>
+        <path d="M -8 26 L 35 -6 L 78 26 Z" fill="#E8785A" stroke="#4A3F35" stroke-width="2.5" stroke-linejoin="round"/>
+        <rect x="28" y="46" width="16" height="26" fill="#B08968" stroke="#4A3F35" stroke-width="2.5"/>
+        <rect x="50" y="34" width="12" height="12" fill="#CDE9F2" stroke="#4A3F35" stroke-width="2.5"/>
+        <line x1="56" y1="34" x2="56" y2="46" stroke="#4A3F35" stroke-width="2"/>
+        <line x1="50" y1="40" x2="62" y2="40" stroke="#4A3F35" stroke-width="2"/>
+        <!-- 烟囱 -->
+        <rect x="54" y="-2" width="9" height="16" fill="#B08968" stroke="#4A3F35" stroke-width="2"/>
+        <!-- 炊烟 -->
+        <path d="M 58 -10 q 5 -6 0 -12 q -5 -6 1 -11" fill="none" stroke="#BFCFC0" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+
+      <!-- 大树 -->
+      <g transform="translate(330, 138)">
+        <rect x="-4" y="38" width="9" height="34" rx="3" fill="#A9805C" stroke="#4A3F35" stroke-width="2.5"/>
+        <circle cx="0" cy="20" r="24" fill="#7FB069" stroke="#4A3F35" stroke-width="2.5"/>
+        <circle cx="-18" cy="30" r="15" fill="#7FB069" stroke="#4A3F35" stroke-width="2.5"/>
+        <circle cx="18" cy="30" r="15" fill="#7FB069" stroke="#4A3F35" stroke-width="2.5"/>
+      </g>
+
+      <!-- 小鸡 -->
+      <g transform="translate(480, 186)">
+        <ellipse cx="0" cy="8" rx="13" ry="10" fill="#FFF6E3" stroke="#4A3F35" stroke-width="2.5"/>
+        <circle cx="9" cy="-3" r="7" fill="#FFF6E3" stroke="#4A3F35" stroke-width="2.5"/>
+        <path d="M 15 -3 l 6 2 l -6 2 z" fill="#F2A65A" stroke="#4A3F35" stroke-width="1.5" stroke-linejoin="round"/>
+        <circle cx="10" cy="-5" r="1.5" fill="#4A3F35"/>
+        <path d="M 8 -9 q 3 -4 6 -1" fill="none" stroke="#E8785A" stroke-width="2" stroke-linecap="round"/>
+        <line x1="-3" y1="18" x2="-3" y2="22" stroke="#F2A65A" stroke-width="2" stroke-linecap="round"/>
+        <line x1="4" y1="18" x2="4" y2="22" stroke="#F2A65A" stroke-width="2" stroke-linecap="round"/>
+      </g>
+
+      <!-- 麦穗（左侧） -->
+      <g transform="translate(60, 160)" stroke="#4A3F35" stroke-width="2" stroke-linecap="round">
+        <line x1="0" y1="0" x2="0" y2="42"/>
+        <g fill="#F2C879">
+          <ellipse cx="-6" cy="0" rx="4" ry="7" transform="rotate(-30 -6 0)"/>
+          <ellipse cx="6" cy="0" rx="4" ry="7" transform="rotate(30 6 0)"/>
+          <ellipse cx="-6" cy="12" rx="4" ry="7" transform="rotate(-30 -6 12)"/>
+          <ellipse cx="6" cy="12" rx="4" ry="7" transform="rotate(30 6 12)"/>
+          <ellipse cx="0" cy="-8" rx="4" ry="7"/>
+        </g>
+      </g>
+
+      <!-- 小花点缀 -->
+      <g transform="translate(620, 195)">
+        <line x1="0" y1="0" x2="0" y2="18" stroke="#4A3F35" stroke-width="2"/>
+        <circle cx="0" cy="-4" r="5" fill="#E8785A" stroke="#4A3F35" stroke-width="2"/>
+        <circle cx="0" cy="-4" r="1.8" fill="#F7C860"/>
+      </g>
+      <g transform="translate(270, 205)">
+        <line x1="0" y1="0" x2="0" y2="16" stroke="#4A3F35" stroke-width="2"/>
+        <circle cx="0" cy="-4" r="5" fill="#C98BC9" stroke="#4A3F35" stroke-width="2"/>
+        <circle cx="0" cy="-4" r="1.8" fill="#F7C860"/>
+      </g>
+    </svg>
+
+    <div class="title-box">
+      <h1>🌾 乡村生活<span>小问卷</span> 🏡</h1>
+      <p>聊聊你和乡村的缘分 · 放松作答，没有标准答案</p>
+    </div>
+  </div>
+
+  <!-- ======= 第 1 题 ======= -->
+  <div class="q-card">
+    <div class="q-icon">
+      <!-- 老店图标 -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="#4A3F35" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 10 L4 20 L20 20 L20 10"/>
+        <path d="M3 6 L3 9 Q3 11 5 11 Q7 11 7 9 Q7 11 9 11 Q11 11 11 9 Q11 11 13 11 Q15 11 15 9 Q15 11 17 11 Q19 11 19 9 L19 6 Z"/>
+        <path d="M3 6 Q3 4 5 4 L19 4 Q21 4 21 6"/>
+        <rect x="10" y="14" width="4" height="6"/>
+      </svg>
+    </div>
+    <div class="q-head">
+      <div class="q-num">1</div>
+      <div class="q-title">第一次来到一个陌生村子，你最容易被什么吸引？</div>
+    </div>
+
+    <label class="opt">
+      <input type="radio" name="q1">
+      <div class="opt-box"><span class="radio"></span>
+        <span class="opt-text">一家不起眼的老店、一门快要失传的手艺，或者一个很会讲故事的老人。</span>
+      </div>
+    </label>
+    <label class="opt">
+      <input type="radio" name="q1">
+      <div class="opt-box"><span class="radio"></span>
+        <span class="opt-text">"这里居然还有这个？"——任何没见过的新鲜玩意都能让我停下来。</span>
+      </div>
+    </label>
+    <label class="opt">
+      <input type="radio" name="q1">
+      <div class="opt-box"><span class="radio"></span>
+        <span class="opt-text">山、水、田野、风，还有一种"终于不用赶时间了"的感觉。</span>
+      </div>
+    </label>
+    <label class="opt">
+      <input type="radio" name="q1">
+      <div class="opt-box"><span class="radio"></span>
+        <span class="opt-text">一个有意思的青年空间、兴趣社群，或者特别适合拍照/创作的地方。</span>
+      </div>
+    </label>
+  </div>
+
+  <!-- ======= 第 2 题 ======= -->
+  <div class="q-card">
+    <div class="q-icon">
+      <!-- 音符图标 -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="#4A3F35" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 18 V5 L20 3 V16"/>
+        <circle cx="6" cy="18" r="3"/>
+        <circle cx="17" cy="16" r="3"/>
+      </svg>
+    </div>
+    <div class="q-head">
+      <div class="q-num">2</div>
+      <div class="q-title">如果让你给"乡村生活"配一首 BGM，你觉得更接近哪种？</div>
+    </div>
+
+    <label class="opt">
+      <input type="radio" name="q2">
+      <div class="opt-box"><span class="radio"></span>
+        <span class="opt-text">有点老派，但越听越有味道的民谣。</span>
+      </div>
+    </label>
+    <label class="opt">
+      <input type="radio" name="q2">
+      <div class="opt-box"><span class="radio"></span>
+        <span class="opt-text">节奏感很强、一听上去就比较新潮的歌。</span>
+      </div>
+    </label>
+    <label class="opt">
+      <input type="radio" name="q2">
+      <div class="opt-box"><span class="radio"></span>
+        <span class="opt-text">风声、雨声、树叶沙沙声都可以，只要没有老板的声音。</span>
+      </div>
+    </label>
+    <label class="opt">
+      <input type="radio" name="q2">
+      <div class="opt-box"><span class="radio"></span>
+        <span class="opt-text">二次元 / 电子 / City Pop / 任何你喜欢的"精神食粮"。</span>
+      </div>
+    </label>
+  </div>
+
+  <!-- ======= 第 3 题 ======= -->
+  <div class="q-card">
+    <div class="q-icon">
+      <!-- 星星图标 -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="#4A3F35" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3 L13.8 8.2 L19 8.5 L15 12 L16.2 17.3 L12 14.5 L7.8 17.3 L9 12 L5 8.5 L10.2 8.2 Z"/>
+      </svg>
+    </div>
+    <div class="q-head">
+      <div class="q-num">3</div>
+      <div class="q-title">如果乡村生活遇到"小插曲"（比如断网了 / 快递不包邮 / 没外卖），你会怎么想？</div>
+    </div>
+
+    <label class="opt">
+      <input type="radio" name="q3">
+      <div class="opt-box"><span class="radio"></span>
+        <span class="opt-text">没关系，正好回归自然，看星星干农活，这也是一种现代化的转型体验。</span>
+      </div>
+    </label>
+    <label class="opt">
+      <input type="radio" name="q3">
+      <div class="opt-box"><span class="radio"></span>
+        <span class="opt-text">痛点就是机会！快递不包邮？我研究一下能不能在村里搞个社区团购物流点。</span>
+      </div>
+    </label>
+    <label class="opt">
+      <input type="radio" name="q3">
+      <div class="opt-box"><span class="radio"></span>
+        <span class="opt-text">无所谓，反正我只是个过客。正好去村里小卖部淘点童年零食，也是一种风景。</span>
+      </div>
+    </label>
+    <label class="opt">
+      <input type="radio" name="q3">
+      <div class="opt-box"><span class="radio"></span>
+        <span class="opt-text">破防了！我要发个朋友圈吐槽，然后在线上社群里和网友们狠狠共鸣一下。</span>
+      </div>
+    </label>
+  </div>
+
+  <!-- ======= 第 4 题 ======= -->
+  <div class="q-card">
+    <div class="q-icon">
+      <!-- 金币/种子图标 -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="#4A3F35" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="8.5"/>
+        <path d="M12 8 L13.2 10.8 L16 12 L13.2 13.2 L12 16 L10.8 13.2 L8 12 L10.8 10.8 Z"/>
+      </svg>
+    </div>
+    <div class="q-head">
+      <div class="q-num">4</div>
+      <div class="q-title">假设村里给了你一笔"小启动资金"，只能拿来做一件事，你会——</div>
+    </div>
+
+    <label class="opt">
+      <input type="radio" name="q4">
+      <div class="opt-box"><span class="radio"></span>
+        <span class="opt-text">把家乡的一项老手艺、老味道或者老文化重新做起来，让它有机会被更多人看见。</span>
+      </div>
+    </label>
+    <label class="opt">
+      <input type="radio" name="q4">
+      <div class="opt-box"><span class="radio"></span>
+        <span class="opt-text">找一个自己感兴趣的方向，在村里试着开一家店、做一个项目，先干起来再说。</span>
+      </div>
+    </label>
+    <label class="opt">
+      <input type="radio" name="q4">
+      <div class="opt-box"><span class="radio"></span>
+        <span class="opt-text">举办一场接地气的乡村集市，有美食、有音乐，主打一个松弛、解压。</span>
+      </div>
+    </label>
+    <label class="opt">
+      <input type="radio" name="q4">
+      <div class="opt-box"><span class="radio"></span>
+        <span class="opt-text">做一个线上平台或社群，把喜欢乡村生活、文化和兴趣的人聚到一起。</span>
+      </div>
+    </label>
+  </div>
+
+  <!-- ======= 第 5 题 ======= -->
+  <div class="q-card">
+    <div class="q-icon">
+      <!-- 小房子图标 -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="#4A3F35" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 11 L12 4 L21 11"/>
+        <path d="M5.5 9.5 L5.5 20 L18.5 20 L18.5 9.5"/>
+        <rect x="10" y="13" width="4" height="7"/>
+      </svg>
+    </div>
+    <div class="q-head">
+      <div class="q-num">5</div>
+      <div class="q-title">如果你真的要在乡村待上一段时间，下面哪件事最容易让你产生"我愿意留下来"的念头？</div>
+    </div>
+
+    <label class="opt">
+      <input type="radio" name="q5">
+      <div class="opt-box"><span class="radio"></span>
+        <span class="opt-text">发现自己熟悉的地方正在发生变化，而且自己恰好能为它做些什么。</span>
+      </div>
+    </label>
+    <label class="opt">
+      <input type="radio" name="q5">
+      <div class="opt-box"><span class="radio"></span>
+        <span class="opt-text">遇到一群志同道合的人，发现这里真的能容得下自己的想法和事业。</span>
+      </div>
+    </label>
+    <label class="opt">
+      <input type="radio" name="q5">
+      <div class="opt-box"><span class="radio"></span>
+        <span class="opt-text">发现这里的生活节奏太舒服了，早上醒来不用赶地铁，晚上还能看看星星。</span>
+      </div>
+    </label>
+    <label class="opt">
+      <input type="radio" name="q5">
+      <div class="opt-box"><span class="radio"></span>
+        <span class="opt-text">发现无论身处哪里，都能通过网络继续工作、创作、交朋友，还能参与这里正在发生的事情。</span>
+      </div>
+    </label>
+  </div>
+
+  <!-- ======= 底部 ======= -->
+  <div class="footer">
+    <div class="divider">🌻 🐔 🌻</div>
+    答完啦？把你的选择分享给身边的小伙伴，看看谁是"田园 poets"，谁是"搞事青年"～
+  </div>
+
+</div>
+</body>
+</html>
